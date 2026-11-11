@@ -1,0 +1,27 @@
+# Render service config — Program Tracker bot
+# Docs: https://render.com/docs/blueprint-spec
+# Deploy: connect GitHub repo, Render auto-detects this file.
+
+services:
+  - type: web
+    name: program-tracker
+    runtime: python
+    plan: free                # free tier — spins down after 15 min idle (use UptimeRobot)
+    region: oregon            # closest to Bugcrowd/Telegram infra
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false           # set via Render dashboard (secret)
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GIST_ID
+        sync: false           # leave blank on first deploy — bot creates gist + sends ID via Telegram
+      - key: CHECK_INTERVAL_MINUTES
+        value: "15"
+      - key: PYTHON_VERSION
+        value: "3.11.7"
